@@ -272,7 +272,7 @@ def get_genome_group(src_loc: Path, config: Config) -> GenomeGroup:
         ``GenomeGroup`` based on ``src_loc`` and config.
     """
 
-    print("getting genome groups")
+    LOGGER.info("[DEBUG] Getting GenomeGroup: Method call-get_genome_group")
 
     ggrp = GenomeGroup()
 
@@ -575,7 +575,7 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
         ``ResultsSummary`` object of the mutation trials.
     """
 
-    print("hereeeeee")
+    LOGGER.info("[DEBUG] for run_mutation_trials method")
 
     start = datetime.now()
 
