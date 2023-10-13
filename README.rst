@@ -12,7 +12,8 @@ undetectable by your tests. These mutants are potential modifications in source 
 integration checks would miss.
 
 
-## Steps to use the tool in our intended work:
+Steps to use the tool in our intended work
+---------
 
     - Clone the repository.
     - cd ./mutatest
