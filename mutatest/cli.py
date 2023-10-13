@@ -6,6 +6,7 @@ The command line interface controls. This module defines the entry point for run
 from the command line and the full main trial routine - clean trials, mutations trials, reporting
 results.
 """
+
 import argparse
 import configparser
 import itertools
@@ -13,6 +14,8 @@ import logging
 import re
 import shlex
 import sys
+
+sys.path.append("..")
 
 from datetime import timedelta
 from pathlib import Path
@@ -727,6 +730,7 @@ def cli_main() -> None:
     """Entry point to run CLI args and execute main function."""
     # Run a quick check at the beginning in case of later OS errors.
     cache.check_cache_invalidation_mode()
+    print(sys.argv)
     args = cli_args(sys.argv[1:])
     main(args)
 
@@ -812,3 +816,6 @@ def main(args: argparse.Namespace) -> None:
     if args.exception:
         LOGGER.info("Survivor tolerance check for %s surviving mutants.", args.exception)
         exception_processing(args.exception, results_summary.results)
+
+if __name__ == '__main__':
+    cli_main()

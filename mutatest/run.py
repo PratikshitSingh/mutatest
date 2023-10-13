@@ -28,6 +28,8 @@ from mutatest.api import Genome, GenomeGroup, GenomeGroupTarget
 from mutatest.filters import CategoryCodeFilter
 from mutatest.transformers import CATEGORIES, LocIndex
 
+import inspect
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -195,6 +197,8 @@ def get_sample(ggrp: GenomeGroup, ignore_coverage: bool) -> List[GenomeGroupTarg
     try:
         sample = ggrp.targets if ignore_coverage else ggrp.covered_targets
 
+        print('sample', sample)
+
     except FileNotFoundError:
         LOGGER.info("Coverage file does not exist, proceeding to sample from all targets.")
         sample = ggrp.targets
@@ -267,6 +271,9 @@ def get_genome_group(src_loc: Path, config: Config) -> GenomeGroup:
     Returns:
         ``GenomeGroup`` based on ``src_loc`` and config.
     """
+
+    print("getting genome groups")
+
     ggrp = GenomeGroup()
 
     # check if src_loc is a single file, otherwise assume it's a directory
@@ -283,6 +290,8 @@ def get_genome_group(src_loc: Path, config: Config) -> GenomeGroup:
         ggrp.set_filter(filter_codes=config.filter_codes)
 
     for k, genome in ggrp.items():
+
+
         LOGGER.info(
             "%s",
             colorize_output(
@@ -565,6 +574,9 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
     Returns:
         ``ResultsSummary`` object of the mutation trials.
     """
+
+    print("hereeeeee")
+
     start = datetime.now()
 
     # Create a GenomeGroup from the source-location with config flags
@@ -574,6 +586,7 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
     LOGGER.info("Setting random.seed to: %s", config.random_seed)
     random.seed(a=config.random_seed)
     sample_space = get_sample(ggrp, config.ignore_coverage)
+
     LOGGER.info("Total sample space size: %s", len(sample_space))
     mutation_sample = get_mutation_sample_locations(sample_space, config.n_locations)
 
@@ -631,3 +644,5 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
         n_locs_identified=len(sample_space),
         total_runtime=end - start,
     )
+
+
