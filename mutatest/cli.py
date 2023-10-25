@@ -183,6 +183,20 @@ def cli_parser() -> argparse.ArgumentParser:
         help="Path to .py file to exclude, multiple -e entries supported. (default: None)",
     )
     parser.add_argument(
+        "--git-location",
+        type=lambda x: Path(x).resolve(),
+        default=None,
+        metavar="PATH",
+        help="Path to git repository for calculating git diff of the lines. Should be the same as the source"
+    )
+    parser.add_argument(
+        '--git-commits',
+        type=str,
+        action='append',
+        default=[],
+        help="Hash of up to two commits for git diff"
+    )
+    parser.add_argument(
         "-m",
         "--mode",
         choices=["f", "s", "d", "sd"],
@@ -745,6 +759,7 @@ def main(args: argparse.Namespace) -> None:
         None, reports output
     """
     src_loc = get_src_location(args.src)
+    print(args)
 
     # set the logging level based on the debug flag in args
     # when in debug mode the test stdout is not captured by subprocess.run
@@ -778,6 +793,8 @@ def main(args: argparse.Namespace) -> None:
         ignore_coverage=args.nocov,
         max_runtime=args.timeout_factor * clean_runtime_1.total_seconds(),
         multi_processing=args.parallel,
+        git_commits=args.git_commits,
+        git_location=args.git_location
     )
 
     results_summary = run.run_mutation_trials(

@@ -56,6 +56,8 @@ class Config:
     ignore_coverage: bool = False
     max_runtime: float = 10
     multi_processing: bool = False
+    git_location: Path = None
+    git_commits: List[str] = []
 
 
 class MutantReport(NamedTuple):
