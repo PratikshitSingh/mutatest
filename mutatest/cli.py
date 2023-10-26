@@ -655,6 +655,12 @@ def get_src_location(src_loc: Optional[Path] = None) -> Path:
         "Use --src or --help to see options."
     )
 
+def get_git_location(git_location: Path = None):
+    if git_location.exists():
+        return git_location
+    
+    raise FileNotFoundError("Git location path specified doesn't exist.")
+
 
 def selected_categories(only: List[str], skip: List[str]) -> List[str]:
     """Create the selected categories from the skip/only set to use in filtering.
@@ -793,9 +799,11 @@ def main(args: argparse.Namespace) -> None:
         ignore_coverage=args.nocov,
         max_runtime=args.timeout_factor * clean_runtime_1.total_seconds(),
         multi_processing=args.parallel,
-        git_commits=args.git_commits,
+        git_commit=args.git_commits,
         git_location=args.git_location
     )
+
+    print(config)
 
     results_summary = run.run_mutation_trials(
         src_loc=src_loc, test_cmds=args.testcmds, config=config

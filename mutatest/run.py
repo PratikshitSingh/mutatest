@@ -27,6 +27,7 @@ from mutatest import cache
 from mutatest.api import Genome, GenomeGroup, GenomeGroupTarget
 from mutatest.filters import CategoryCodeFilter
 from mutatest.transformers import CATEGORIES, LocIndex
+from mutatest.git_filter import get_git_difference
 
 import inspect
 
@@ -56,8 +57,8 @@ class Config:
     ignore_coverage: bool = False
     max_runtime: float = 10
     multi_processing: bool = False
+    git_commit: Optional = None
     git_location: Path = None
-    git_commits: List[str] = []
 
 
 class MutantReport(NamedTuple):
@@ -199,7 +200,7 @@ def get_sample(ggrp: GenomeGroup, ignore_coverage: bool) -> List[GenomeGroupTarg
     try:
         sample = ggrp.targets if ignore_coverage else ggrp.covered_targets
 
-        print('sample', sample)
+        print('sample', list(sample)[:3])
 
     except FileNotFoundError:
         LOGGER.info("Coverage file does not exist, proceeding to sample from all targets.")
@@ -588,6 +589,9 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
     LOGGER.info("Setting random.seed to: %s", config.random_seed)
     random.seed(a=config.random_seed)
     sample_space = get_sample(ggrp, config.ignore_coverage)
+
+    # Filter the sample space based on git diff
+    get_git_difference(config.git_location, config.git_commit)
 
     LOGGER.info("Total sample space size: %s", len(sample_space))
     mutation_sample = get_mutation_sample_locations(sample_space, config.n_locations)
