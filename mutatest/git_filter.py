@@ -1,5 +1,6 @@
 import subprocess
 from pathlib import Path
+import os
 
 def get_git_difference(git_location: Path, git_commit: list):
 
@@ -28,13 +29,14 @@ def get_git_difference(git_location: Path, git_commit: list):
             line = line.decode()
             path, line_num, line_change = line.split(':')
 
-            if line_change.startswith('+'):
-                if path not in git_diff_hashmap:
-                    git_diff_hashmap[path] = []
-                
-                git_diff_hashmap[path].append(int(line_num))
+            full_path = str(os.path.join(git_location.resolve(), path))
 
-        print(git_diff_hashmap)
+            if line_change.startswith('+'):
+                if full_path not in git_diff_hashmap:
+                    git_diff_hashmap[full_path] = []
+                
+                git_diff_hashmap[full_path].append(int(line_num))
+
     else:
         raise Exception('Cannot successfully compute the git diff.')
 
@@ -49,14 +51,28 @@ def get_git_difference(git_location: Path, git_commit: list):
         for line in result.stdout:
             line = line.decode()
             line = line.strip(' \n')
-            git_untracked_files.append(line)
-
-        print(git_untracked_files)
+            full_path = str(os.path.join(git_location.resolve(), line))
+            git_untracked_files.append(full_path)
 
     else:
         raise Exception('Cannot successfully compute git untacked files.')
 
+    return (git_diff_hashmap, git_untracked_files)
 
 
-def filter_sample_space(sample_space):
-    pass
+
+def filter_sample_space(sample_space, git_diff_hashmap, git_untracked_files, git_location):
+    
+    filtered_samples = []
+
+    for sample in list(sample_space):
+        mutation_target_path = sample.source_path.resolve()
+        line_num = int(sample.loc_idx.lineno)
+
+        if mutation_target_path in git_untracked_files:
+            filtered_samples.append(sample)
+        elif mutation_target_path in git_diff_hashmap and line_num in git_diff_hashmap[mutation_target_path]:
+            filtered_samples.append(sample)
+    
+    return filtered_samples
+        

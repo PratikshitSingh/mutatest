@@ -27,7 +27,7 @@ from mutatest import cache
 from mutatest.api import Genome, GenomeGroup, GenomeGroupTarget
 from mutatest.filters import CategoryCodeFilter
 from mutatest.transformers import CATEGORIES, LocIndex
-from mutatest.git_filter import get_git_difference
+from mutatest.git_filter import get_git_difference, filter_sample_space
 
 import inspect
 
@@ -591,8 +591,11 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
     sample_space = get_sample(ggrp, config.ignore_coverage)
 
     # Filter the sample space based on git diff
-    git_diff_hashmap = get_git_difference(config.git_location, config.git_commit)
-    
+    git_diff_hashmap, git_untracked_files = get_git_difference(config.git_location, config.git_commit)
+
+    print(git_diff_hashmap, git_untracked_files)
+    sample_space = filter_sample_space(sample_space, git_diff_hashmap, git_untracked_files, config.git_location)
+
 
     LOGGER.info("Total sample space size: %s", len(sample_space))
     mutation_sample = get_mutation_sample_locations(sample_space, config.n_locations)
