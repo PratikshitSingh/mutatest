@@ -35,6 +35,28 @@ def get_git_difference(git_location: Path, git_commit: list):
                 git_diff_hashmap[path].append(int(line_num))
 
         print(git_diff_hashmap)
+    else:
+        raise Exception('Cannot successfully compute the git diff.')
+
+    cmd = 'git ls-files --others --exclude-standard'
+
+    result = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=git_location.resolve(), shell=True)
+    result.wait()
+
+    if result.returncode == 0:
+        git_untracked_files = []
+
+        for line in result.stdout:
+            line = line.decode()
+            line = line.strip(' \n')
+            git_untracked_files.append(line)
+
+        print(git_untracked_files)
+
+    else:
+        raise Exception('Cannot successfully compute git untacked files.')
 
 
-    raise Exception('Cannot successfully compute the git diff.')
+
+def filter_sample_space(sample_space):
+    pass

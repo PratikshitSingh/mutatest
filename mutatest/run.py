@@ -200,7 +200,7 @@ def get_sample(ggrp: GenomeGroup, ignore_coverage: bool) -> List[GenomeGroupTarg
     try:
         sample = ggrp.targets if ignore_coverage else ggrp.covered_targets
 
-        print('sample', list(sample)[:3])
+        # print('sample', list(sample)[:3])
 
     except FileNotFoundError:
         LOGGER.info("Coverage file does not exist, proceeding to sample from all targets.")
@@ -591,7 +591,8 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
     sample_space = get_sample(ggrp, config.ignore_coverage)
 
     # Filter the sample space based on git diff
-    get_git_difference(config.git_location, config.git_commit)
+    git_diff_hashmap = get_git_difference(config.git_location, config.git_commit)
+    
 
     LOGGER.info("Total sample space size: %s", len(sample_space))
     mutation_sample = get_mutation_sample_locations(sample_space, config.n_locations)
