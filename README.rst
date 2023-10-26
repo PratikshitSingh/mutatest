@@ -12,6 +12,25 @@ undetectable by your tests. These mutants are potential modifications in source 
 integration checks would miss.
 
 
+Steps to use the tool in our intended work
+---------
+
+    - Clone the repository.
+    - cd ./mutatest
+    - .. code-block:: bash
+
+        $ python3 cli.py -s ../../fastapi/fastapi/ -t "pytest --cov=../../fastapi/fastapi --cov-report=term --cov-report=html ../../fastapi/tests --ignore=../../fastapi/tests/test_tutorial"
+
+    - The directory structure is as:
+        ```
+        ├── src
+        │   ├── mutatest
+        │   │   ├── mutatest
+        │   │       ├── cli.py
+        │   │   ├── README.rst
+        │   ├── fastapi
+        ```
+
 Features
 ---------
 
