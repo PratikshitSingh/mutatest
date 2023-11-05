@@ -241,6 +241,8 @@ class Genome:
             # print(ast.dump(self.ast))
             ro_mast.visit(self.ast)
             self._targets = ro_mast.locs
+        
+        # print(self._targets)
 
         return CategoryCodeFilter(codes=self.filter_codes).filter(self._targets)
 

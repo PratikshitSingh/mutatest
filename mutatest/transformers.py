@@ -18,7 +18,7 @@ and optionally create the mutation at that node. These are implemented in the ``
 import ast
 import logging
 import sys
-
+from _ast import *
 from pathlib import Path
 
 ####################################################################################################
@@ -556,6 +556,40 @@ class MutateBase(ast.NodeTransformer):
 
         LOGGER.debug("%s (%s, %s): no mutations applied.", log_header, node.lineno, node.col_offset)
         return node
+
+    # def generic_visit(self, node):
+
+    #     def iter_fields(node):
+    #         """
+    #         Yield a tuple of ``(fieldname, value)`` for each field in ``node._fields``
+    #         that is present on *node*.
+    #         """
+    #         for field in node._fields:
+    #             try:
+    #                 yield field, getattr(node, field)
+    #             except AttributeError:
+    #                 pass
+
+    #     for field, old_value in iter_fields(node):
+    #         if isinstance(old_value, list):
+    #             new_values = []
+    #             for value in old_value:
+    #                 if isinstance(value, AST):
+    #                     value = self.visit(value)
+    #                     if value is None:
+    #                         continue
+    #                     elif not isinstance(value, AST):
+    #                         new_values.extend(value)
+    #                         continue
+    #                 new_values.append(value)
+    #             old_value[:] = new_values
+    #         elif isinstance(old_value, AST):
+    #             new_node = self.visit(old_value)
+    #             if new_node is None:
+    #                 delattr(node, field)
+    #             else:
+    #                 setattr(node, field, new_node)
+    #     return node
 
 
 class NameConstantMixin:

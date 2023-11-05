@@ -533,13 +533,13 @@ def mutation_sample_dispatch(
     op_code = CATEGORIES[ggrp_target.loc_idx.ast_class]
     mutant_operations = CategoryCodeFilter(codes=(op_code,)).valid_mutations
 
-    LOGGER.debug("MUTATION OPS: %s", mutant_operations)
-    LOGGER.debug("MUTATION: %s", ggrp_target.loc_idx)
+    LOGGER.info("MUTATION OPS: %s", mutant_operations)
+    LOGGER.info("MUTATION: %s", ggrp_target.loc_idx)
     mutant_operations.remove(ggrp_target.loc_idx.op_type)
 
     while mutant_operations:
         # random.choice doesn't support sets, but sample of 1 produces a list with one element
-        current_mutation = random.sample(mutant_operations, k=1)[0]
+        current_mutation = random.sample(list(mutant_operations), k=1)[0]
         mutant_operations.remove(current_mutation)
 
         trial_results = trial_runner(
@@ -590,12 +590,12 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
     random.seed(a=config.random_seed)
     sample_space = get_sample(ggrp, config.ignore_coverage)
 
+    # print(sample_space)
     # Filter the sample space based on git diff
     git_diff_hashmap, git_untracked_files = get_git_difference(config.git_location, config.git_commit)
+    # print(git_diff_hashmap, git_untracked_files)
 
-    print(git_diff_hashmap, git_untracked_files)
     sample_space = filter_sample_space(sample_space, git_diff_hashmap, git_untracked_files, config.git_location)
-
 
     LOGGER.info("Total sample space size: %s", len(sample_space))
     mutation_sample = get_mutation_sample_locations(sample_space, config.n_locations)
