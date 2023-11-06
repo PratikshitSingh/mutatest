@@ -238,7 +238,7 @@ class Genome:
             ro_mast = MutateAST(
                 target_idx=None, mutation=None, readonly=True, src_file=self.source_file
             )
-            # print(ast.dump(self.ast))
+            print(ast.dump(self.ast, indent=4))
             ro_mast.visit(self.ast)
             self._targets = ro_mast.locs
         

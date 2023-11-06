@@ -533,8 +533,8 @@ def mutation_sample_dispatch(
     op_code = CATEGORIES[ggrp_target.loc_idx.ast_class]
     mutant_operations = CategoryCodeFilter(codes=(op_code,)).valid_mutations
 
-    LOGGER.info("MUTATION OPS: %s", mutant_operations)
-    LOGGER.info("MUTATION: %s", ggrp_target.loc_idx)
+    LOGGER.debug("MUTATION OPS: %s", mutant_operations)
+    LOGGER.debug("MUTATION: %s", ggrp_target.loc_idx)
     mutant_operations.remove(ggrp_target.loc_idx.op_type)
 
     while mutant_operations:
