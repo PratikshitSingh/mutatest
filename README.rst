@@ -26,10 +26,10 @@ Steps to use the tool in our intended work
         ```
         ├── src
         │   ├── fastapi
-        |   |   ├── mutatest
+        │   │   ├── mutatest
         │   │       ├── mutatest
         │   │           ├── cli.py
-
+        │   │       ├── README.rst
         ```
 
 Features
