@@ -1,9 +1,9 @@
 ### Setup a new workflow .yml file in your repository to run the pipeline for mutation testing for new commits
 
-<!-- add the below script as a .yml file-->
+<!-- add the below script as a .yml file to the prioject repo and change the paths-->
 
     ```yml
-    name: Python Mutation Testing Pipeline
+    name: Mutation Test
 
     on:
         push:
