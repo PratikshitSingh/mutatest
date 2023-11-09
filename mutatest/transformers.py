@@ -557,22 +557,22 @@ class MutateBase(ast.NodeTransformer):
         LOGGER.debug("%s (%s, %s): no mutations applied.", log_header, node.lineno, node.col_offset)
         return node
 
-    def visit_Expr(self, node: ast.Expr):
-        print("visiting Expr node", node, node.value)
-        if isinstance(node.value, ast.Call):
-            _n: ast.Call = node.value
-            if isinstance(_n.func, ast.Name):
-                if _n.func.id in ["print", "sleep"]:
-                    return node
-            elif isinstance(_n.func, ast.Attribute):
-                if _n.func.value.id == "time":
-                    return node
+    # def visit_Expr(self, node: ast.Expr):
+    #     print("visiting Expr node", node, node.value)
+    #     if isinstance(node.value, ast.Call):
+    #         _n: ast.Call = node.value
+    #         if isinstance(_n.func, ast.Name):
+    #             if _n.func.id in ["print", "sleep"]:
+    #                 return node
+    #         elif isinstance(_n.func, ast.Attribute):
+    #             if _n.func.value.id == "time":
+    #                 return node
             
 
 
-        self.generic_visit(node)
+    #     self.generic_visit(node)
 
-        return node
+    #     return node
 
     # def generic_visit(self, node):
 
