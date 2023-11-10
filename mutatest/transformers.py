@@ -20,6 +20,7 @@ import logging
 import sys
 from _ast import *
 from pathlib import Path
+from .heuristics import BASE_LEVEL_FUNCTION_CALLS
 
 ####################################################################################################
 # AST TRANSFORMERS
@@ -565,7 +566,7 @@ class MutateBase(ast.NodeTransformer):
         if isinstance(node.value, ast.Call):
             _n: ast.Call = node.value
             if isinstance(_n.func, ast.Name):
-                if _n.func.id in ["print", "sleep"]:
+                if _n.func.id in BASE_LEVEL_FUNCTION_CALLS:
                     return node
             
 
