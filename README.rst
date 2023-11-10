@@ -19,7 +19,7 @@ Steps to use the tool in our intended work
     - cd ./mutatest
     - .. code-block:: bash
 
-        $ python3 cli.py -s ../../fastapi/fastapi/ -t "pytest --cov=../../fastapi/fastapi --cov-report=term --cov-report=html ../../fastapi/tests --ignore=../../fastapi/tests/test_tutorial"
+        $ python3 cli.py -s <path to source code> -t "pytest --cov=<path to source code> --cov-report=term --cov-report=html <path to test folder>" --git-location=<path to base git directory for source code> 
 
     - The directory structure will be like below when the pipeline runs and clone the mutatest repository for the testing. 
     - Note: The mutatest repository is only cloned for testing pipeline and not actually pusheed to the repository:
