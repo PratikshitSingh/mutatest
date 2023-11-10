@@ -1,0 +1,3 @@
+found query: some-query
+message to foo@example.com
+Application shutdownApplication shutdown
