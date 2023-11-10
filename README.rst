@@ -21,14 +21,15 @@ Steps to use the tool in our intended work
 
         $ python3 cli.py -s ../../fastapi/fastapi/ -t "pytest --cov=../../fastapi/fastapi --cov-report=term --cov-report=html ../../fastapi/tests --ignore=../../fastapi/tests/test_tutorial"
 
-    - The directory structure is as:
+    - The directory structure will be like below when the pipeline runs and clone the mutatest repository for the testing. 
+    - Note: The mutatest repository is only cloned for testing pipeline and not actually pusheed to the repository:
         ```
         ├── src
-        │   ├── mutatest
-        │   │   ├── mutatest
-        │   │       ├── cli.py
-        │   │   ├── README.rst
         │   ├── fastapi
+        │   │   ├── mutatest
+        │   │       ├── mutatest
+        │   │           ├── cli.py
+        │   │       ├── README.rst
         ```
 
 Features
