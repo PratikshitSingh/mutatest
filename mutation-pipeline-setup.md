@@ -4,7 +4,7 @@
 1. Add the below script as a .yml file to the project repo.
 2. Change the path of the Run Mutatest with Pytest step as follows:
 
-    python3 cli.py -s 'source_dir' -t "pytest --cov='source_dir' --cov-report=term --cov-report=html 'test_dir_in_project' --ignore='test_fles_to_ignore' "
+    python3 cli.py -s 'source_dir' -t "pytest --cov='source_dir' --cov-report=term --cov-report=html 'test_dir_in_project' --ignore='test_fles_to_ignore' " --git-location='base git dir for project'
 
 
 
@@ -48,4 +48,4 @@
         - name: Run Mutatest with pytest
           run: |
             cd ./mutatest/mutatest
-            python3 cli.py -s ../../fastapi/ -t "pytest --cov=../../fastapi/ --cov-report=term --cov-report=html ../../tests --ignore=../../tests/test_tutorial"
+            python3 cli.py -s ../../fastapi/ -t "pytest --cov=../../fastapi/ --cov-report=term --cov-report=html ../../tests --ignore=../../tests/test_tutorial" --git-location=../../fastapi
