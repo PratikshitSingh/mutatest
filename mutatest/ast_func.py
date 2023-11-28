@@ -1,5 +1,8 @@
 import ast
 from astmonkey import visitors, transformers
+import json
+import random
+from datasketch import MinHash
 
 def find_node(node_to_find, tree_node):
 
@@ -88,5 +91,64 @@ def calculate_pivot_set(mutation_sample, ast_map):
             j += 1
         i += 1
 
-    print(pivot_sets)
+    return pivot_sets
 
+def calculate_pivot_set_minhash(pivot_set):
+    a = 17
+    b = 59
+    c = 83
+    K = 15485863
+
+    with open('./random.json') as fp:
+        data = json.load(fp)
+
+    hash_set = []
+
+    for pivot in pivot_set:
+        lca, u, v = pivot
+        
+        lca = lca.__class__.__name__
+        u = u.__class__.__name__
+        v = v.__class__.__name__
+
+        if lca in data:
+            lca_hash = data[lca]
+        else:
+            lca_hash = random.randint(10, 100000)
+            data[lca] = lca_hash
+        
+        if u in data:
+            u_hash = data[u]
+        else:
+            u_hash = random.randint(10, 100000)
+            data[u] = u_hash
+        
+        if v in data:
+            v_hash = data[v]
+        else:
+            v_hash = random.randint(10, 100000)
+            data[v] = v_hash
+        
+        hash_set.append((a * lca_hash + b * u_hash + c* v_hash) % K)
+    
+    with open('./random.json', 'w') as fp:
+        json.dump(data, fp)
+
+    mh_a = MinHash()
+    for item in hash_set:
+        mh_a.update(str(item).encode('utf8'))
+
+    return mh_a
+        
+
+# history = [(MinHash obj, {operators}), ()]
+def find_similar_sets(min_hash: MinHash, history: list):
+
+    similar_sets = []
+
+    for item in history:      
+        similarity = min_hash.jaccard(item[0])
+        if similarity >= 0.7:
+            similar_sets.append(item)
+
+    return similar_sets

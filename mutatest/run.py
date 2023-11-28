@@ -28,9 +28,10 @@ from mutatest.api import Genome, GenomeGroup, GenomeGroupTarget
 from mutatest.filters import CategoryCodeFilter
 from mutatest.transformers import CATEGORIES, LocIndex
 from mutatest.git_filter import get_git_difference, filter_sample_space
-from ast_func import build_ast, calculate_pivot_set
+from ast_func import build_ast, calculate_pivot_set, calculate_pivot_set_minhash, find_similar_sets
 
 import inspect
+import pickle
 
 
 LOGGER = logging.getLogger(__name__)
@@ -505,6 +506,7 @@ def mutation_sample_dispatch(
     test_cmds: List[str],
     config: Config,
     trial_runner: TRIAL_RUNNER_TYPE,
+    min_hash
 ) -> List[MutantTrialResult]:
     """Dispatch for the mutant trial.
 
@@ -530,6 +532,15 @@ def mutation_sample_dispatch(
     LOGGER.info(
         "Current target location: %s, %s", ggrp_target.source_path.name, ggrp_target.loc_idx
     )
+
+    if os.path.exists('./history.pkl'):
+        with open('./history.pkl') as fp:
+            history = pickle.load(fp)
+    else:
+        history = []
+
+    similar_sets = find_similar_sets(min_hash, history)
+    print(similar_sets)
 
     op_code = CATEGORIES[ggrp_target.loc_idx.ast_class]
     mutant_operations = CategoryCodeFilter(codes=(op_code,)).valid_mutations
@@ -602,8 +613,7 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
     mutation_sample = get_mutation_sample_locations(sample_space, config.n_locations)
 
     ast_map = build_ast(mutation_sample)
-    calculate_pivot_set(mutation_sample[0], ast_map)
-
+    
     # Run trials through mutations
     LOGGER.info("Starting individual mutation trials!")
     results: List[MutantTrialResult] = []
@@ -632,6 +642,9 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
 
         for ggrp_target in mutation_sample:
 
+            pivot_sets = calculate_pivot_set(ggrp_target, ast_map)
+            min_hash = calculate_pivot_set_minhash(pivot_sets)
+
             results.extend(
                 mutation_sample_dispatch(
                     ggrp_target=ggrp_target,
@@ -639,6 +652,7 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
                     test_cmds=test_cmds,
                     config=config,
                     trial_runner=create_mutation_run_trial,
+                    min_hash=min_hash
                 )
             )
 
