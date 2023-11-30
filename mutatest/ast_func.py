@@ -151,8 +151,6 @@ def find_similar_sets(min_hash: MinHash, history: list):
         if similarity >= 0.7:
             similar_sets.append((item, history[item]))
 
-    print('similar sets', similar_sets)
-
     return similar_sets
 
 
@@ -163,12 +161,10 @@ def rank_mutant_operators(similar_sets):
 
     for item in similar_sets:
         for op in item[1]:
-            print(item[1][op])
+            # print(item[1][op])
             all_operators.append((op, item[1][op]['survive_count']))
     
     ranked_operators = sorted(all_operators, key=lambda x: x[1], reverse=True)
-
-    print("ranked operators", ranked_operators)
 
     op_set = set()
 

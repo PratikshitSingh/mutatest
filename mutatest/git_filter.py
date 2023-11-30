@@ -13,11 +13,13 @@ def get_git_difference(git_location: Path, git_commit: list):
         commit1, commit2 = git_commit
     elif len(git_commit) == 1:
         commit1 = git_commit[0]
+    elif len(git_commit) == 0:
+        commit1 = 'HEAD~'
 
     cmd = f'git diff -U0 {commit1} {commit2} | "{showline_path}" show_path=1 show_hunk=0 show_header=0'
-    print(cmd)
+    # print(cmd)
 
-    print(git_location.resolve())
+    # print(git_location.resolve())
 
     result = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=git_location.resolve(), shell=True)
     result.wait()

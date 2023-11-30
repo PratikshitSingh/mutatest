@@ -546,8 +546,6 @@ def mutation_sample_dispatch(
     mutant_operations = list(CategoryCodeFilter(codes=(op_code,)).valid_mutations)
 
     random.shuffle(mutant_operations)
-    print("hereeee", mutant_operations)
-
     mutant_operations = targeted_mutant_operators + [x for x in mutant_operations if x not in targeted_mutant_operators]
 
 
@@ -555,8 +553,6 @@ def mutation_sample_dispatch(
     LOGGER.debug("MUTATION: %s", ggrp_target.loc_idx)
     mutant_operations.remove(ggrp_target.loc_idx.op_type)
 
-
-    print("final mutant operations set", mutant_operations)
     while mutant_operations:
         # random.choice doesn't support sets, but sample of 1 produces a list with one element
         current_mutation = mutant_operations[0]
@@ -578,9 +574,7 @@ def mutation_sample_dispatch(
         ):
             
             if min_hash in history:
-                print("comes here")
                 if current_mutation in history[min_hash]:
-                    print("should come hereee")
                     history[min_hash][current_mutation]['survive_count'] += 1
                 else:
                     history[min_hash][current_mutation] = {"survive_count" : 1}
@@ -590,8 +584,6 @@ def mutation_sample_dispatch(
 
             break
     
-    print(history)
-
     with open('./history.pkl', 'wb') as fp:
         pickle.dump(history, fp)
 
@@ -629,10 +621,10 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
 
     # print(sample_space)
     # Filter the sample space based on git diff
-    # git_diff_hashmap, git_untracked_files = get_git_difference(config.git_location, config.git_commit)
+    git_diff_hashmap, git_untracked_files = get_git_difference(config.git_location, config.git_commit)
     # print(git_diff_hashmap, git_untracked_files)
 
-    # sample_space = filter_sample_space(sample_space, git_diff_hashmap, git_untracked_files, config.git_location)
+    sample_space = filter_sample_space(sample_space, git_diff_hashmap, git_untracked_files, config.git_location)
 
     LOGGER.info("Total sample space size: %s", len(sample_space))
     mutation_sample = get_mutation_sample_locations(sample_space, config.n_locations)

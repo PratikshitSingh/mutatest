@@ -750,7 +750,7 @@ def cli_main() -> None:
     """Entry point to run CLI args and execute main function."""
     # Run a quick check at the beginning in case of later OS errors.
     cache.check_cache_invalidation_mode()
-    print(sys.argv)
+    # print(sys.argv)
     args = cli_args(sys.argv[1:])
     main(args)
 
@@ -765,7 +765,7 @@ def main(args: argparse.Namespace) -> None:
         None, reports output
     """
     src_loc = get_src_location(args.src)
-    print(args)
+    # print(args)
 
     # set the logging level based on the debug flag in args
     # when in debug mode the test stdout is not captured by subprocess.run
@@ -803,7 +803,7 @@ def main(args: argparse.Namespace) -> None:
         git_location=args.git_location
     )
 
-    print(config)
+    # print(config)
 
     results_summary = run.run_mutation_trials(
         src_loc=src_loc, test_cmds=args.testcmds, config=config
