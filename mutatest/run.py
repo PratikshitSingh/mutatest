@@ -28,7 +28,7 @@ from mutatest.api import Genome, GenomeGroup, GenomeGroupTarget
 from mutatest.filters import CategoryCodeFilter
 from mutatest.transformers import CATEGORIES, LocIndex
 from mutatest.git_filter import get_git_difference, filter_sample_space
-from ast_func import build_ast, calculate_pivot_set, calculate_pivot_set_minhash, find_similar_sets
+from ast_func import build_ast, calculate_pivot_set, calculate_pivot_set_minhash, find_similar_sets, rank_mutant_operators
 
 import inspect
 import pickle
@@ -534,24 +534,32 @@ def mutation_sample_dispatch(
     )
 
     if os.path.exists('./history.pkl'):
-        with open('./history.pkl') as fp:
+        with open('./history.pkl', 'rb') as fp:
             history = pickle.load(fp)
     else:
-        history = []
+        history = {}
 
     similar_sets = find_similar_sets(min_hash, history)
-    print(similar_sets)
+    targeted_mutant_operators = rank_mutant_operators(similar_sets)
 
     op_code = CATEGORIES[ggrp_target.loc_idx.ast_class]
-    mutant_operations = CategoryCodeFilter(codes=(op_code,)).valid_mutations
+    mutant_operations = list(CategoryCodeFilter(codes=(op_code,)).valid_mutations)
+
+    random.shuffle(mutant_operations)
+    print("hereeee", mutant_operations)
+
+    mutant_operations = targeted_mutant_operators + [x for x in mutant_operations if x not in targeted_mutant_operators]
+
 
     LOGGER.debug("MUTATION OPS: %s", mutant_operations)
     LOGGER.debug("MUTATION: %s", ggrp_target.loc_idx)
     mutant_operations.remove(ggrp_target.loc_idx.op_type)
 
+
+    print("final mutant operations set", mutant_operations)
     while mutant_operations:
         # random.choice doesn't support sets, but sample of 1 produces a list with one element
-        current_mutation = random.sample(list(mutant_operations), k=1)[0]
+        current_mutation = mutant_operations[0]
         mutant_operations.remove(current_mutation)
 
         trial_results = trial_runner(
@@ -568,7 +576,24 @@ def mutation_sample_dispatch(
         if trial_output_check_break(
             trial_results, config, ggrp_target.source_path, ggrp_target.loc_idx
         ):
+            
+            if min_hash in history:
+                print("comes here")
+                if current_mutation in history[min_hash]:
+                    print("should come hereee")
+                    history[min_hash][current_mutation]['survive_count'] += 1
+                else:
+                    history[min_hash][current_mutation] = {"survive_count" : 1}
+            else:
+                history[min_hash] = {}
+                history[min_hash][current_mutation] = {"survive_count" : 1}
+
             break
+    
+    print(history)
+
+    with open('./history.pkl', 'wb') as fp:
+        pickle.dump(history, fp)
 
     return results
 

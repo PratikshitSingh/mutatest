@@ -2,7 +2,7 @@ import ast
 from astmonkey import visitors, transformers
 import json
 import random
-from datasketch import MinHash
+from datasketch import MinHash, LeanMinHash
 
 def find_node(node_to_find, tree_node):
 
@@ -138,17 +138,45 @@ def calculate_pivot_set_minhash(pivot_set):
     for item in hash_set:
         mh_a.update(str(item).encode('utf8'))
 
-    return mh_a
+    return LeanMinHash(mh_a)
         
 
-# history = [(MinHash obj, {operators}), ()]
+# history = {(MinHash obj) :{op : {survive_count, total_count}}), ...}
 def find_similar_sets(min_hash: MinHash, history: list):
 
     similar_sets = []
 
     for item in history:      
-        similarity = min_hash.jaccard(item[0])
+        similarity = min_hash.jaccard(item)
         if similarity >= 0.7:
-            similar_sets.append(item)
+            similar_sets.append((item, history[item]))
+
+    print('similar sets', similar_sets)
 
     return similar_sets
+
+
+# similar sets  = [(MinHash obj, {op : {survive_count, total_count}}), ()]
+def rank_mutant_operators(similar_sets):
+
+    all_operators = []
+
+    for item in similar_sets:
+        for op in item[1]:
+            print(item[1][op])
+            all_operators.append((op, item[1][op]['survive_count']))
+    
+    ranked_operators = sorted(all_operators, key=lambda x: x[1], reverse=True)
+
+    print("ranked operators", ranked_operators)
+
+    op_set = set()
+
+    unique_ranked_operators = []
+
+    for item in ranked_operators:
+        if item[0] not in op_set:
+            unique_ranked_operators.append(item[0])
+            op_set.add(item[0])
+    
+    return unique_ranked_operators
