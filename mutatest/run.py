@@ -621,9 +621,11 @@ def run_mutation_trials(src_loc: Path, test_cmds: List[str], config: Config) -> 
 
     # print(sample_space)
     # Filter the sample space based on git diff
+    print("Calculating git diffs")
     git_diff_hashmap, git_untracked_files = get_git_difference(config.git_location, config.git_commit)
     # print(git_diff_hashmap, git_untracked_files)
 
+    print("filtering sample space")
     sample_space = filter_sample_space(sample_space, git_diff_hashmap, git_untracked_files, config.git_location)
 
     LOGGER.info("Total sample space size: %s", len(sample_space))
