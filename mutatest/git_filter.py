@@ -13,8 +13,8 @@ def get_git_difference(git_location: Path, git_commit: list):
         commit1, commit2 = git_commit
     elif len(git_commit) == 1:
         commit1 = git_commit[0]
-    elif len(git_commit) == 0:
-        commit1 = 'HEAD~'
+    # elif len(git_commit) == 0:
+    #     commit1 = 'HEAD~'
 
     cmd = f'git diff -U0 {commit1} {commit2} | "{showline_path}" show_path=1 show_hunk=0 show_header=0'
     # print(cmd)
